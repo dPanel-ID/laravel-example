@@ -7,6 +7,9 @@ export COMPOSER_ALLOW_SUPERUSER="${COMPOSER_ALLOW_SUPERUSER:-1}"
 export APP_ENV="${APP_ENV:-production}"
 export APP_DEBUG="${APP_DEBUG:-false}"
 export OCTANE_SERVER="${OCTANE_SERVER:-frankenphp}"
+export LOG_CHANNEL="${LOG_CHANNEL:-stderr}"
+export LOG_STACK="${LOG_STACK:-stderr}"
+export LOG_DEPRECATIONS_CHANNEL="${LOG_DEPRECATIONS_CHANNEL:-stderr}"
 
 echo "Preparing Laravel application in ${APP_DIR}"
 

@@ -9,6 +9,9 @@ WORKERS="${OCTANE_WORKERS:-auto}"
 MAX_REQUESTS="${OCTANE_MAX_REQUESTS:-500}"
 
 export OCTANE_SERVER="${OCTANE_SERVER:-frankenphp}"
+export LOG_CHANNEL="${LOG_CHANNEL:-stderr}"
+export LOG_STACK="${LOG_STACK:-stderr}"
+export LOG_DEPRECATIONS_CHANNEL="${LOG_DEPRECATIONS_CHANNEL:-stderr}"
 
 if [[ ! -f ".env" && -f ".env.example" ]]; then
   cp ".env.example" ".env"
@@ -21,7 +24,8 @@ fi
 
 mkdir -p bootstrap/cache storage/logs
 
-command=(php artisan octane:frankenphp --host="${HOST}" --port="${PORT}" --workers="${WORKERS}" --max-requests="${MAX_REQUESTS}")
+php_args=(-d display_errors=stderr -d log_errors=1 -d error_log=/dev/stderr)
+command=(php "${php_args[@]}" artisan octane:frankenphp --host="${HOST}" --port="${PORT}" --workers="${WORKERS}" --max-requests="${MAX_REQUESTS}")
 
 if [[ -n "${OCTANE_CADDYFILE:-}" ]]; then
   command+=(--caddyfile="${OCTANE_CADDYFILE}")

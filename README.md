@@ -153,6 +153,9 @@ OCTANE_SERVER=frankenphp
 OCTANE_WORKERS=auto
 OCTANE_MAX_REQUESTS=500
 DPANEL_RUN_MIGRATIONS=true
+LOG_CHANNEL=stderr
+LOG_STACK=stderr
+LOG_DEPRECATIONS_CHANNEL=stderr
 ```
 
 Set `APP_URL` after routing or a load balancer is configured:
@@ -205,6 +208,7 @@ The build script prepares Laravel for production:
 - Installs frontend dependencies with `pnpm`, `npm`, or `yarn`.
 - Builds frontend assets with Vite.
 - Runs migrations when `DPANEL_RUN_MIGRATIONS=true`.
+- Defaults Laravel logs and deprecations to `stderr` before caching config.
 - Optimizes Laravel caches.
 
 ### `scripts/start.sh`
@@ -217,6 +221,17 @@ php artisan octane:frankenphp --host="${HOST}" --port="${PORT}"
 
 It binds to `0.0.0.0`, reads `PORT` from dPanel, and keeps the process in the
 foreground so systemd can manage the service.
+
+Laravel application logs default to `stderr`, and PHP runtime errors are sent to
+`/dev/stderr`. Octane and FrankenPHP normal output remains on the process
+standard streams, so a systemd service can collect everything with the journal:
+
+```ini
+StandardOutput=journal
+StandardError=journal
+```
+
+Use `journalctl -u <service-name> -f` to follow the deployed service logs.
 
 ## Local Test
 
