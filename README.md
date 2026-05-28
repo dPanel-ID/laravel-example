@@ -205,8 +205,10 @@ The build script prepares Laravel for production:
 - Installs Composer dependencies without dev packages.
 - Generates `APP_KEY` when needed.
 - Installs Octane for FrankenPHP.
-- Installs frontend dependencies with `pnpm`, `npm`, or `yarn`.
+- Installs frontend dependencies, including dev dependencies required by Vite,
+  with `pnpm`, `npm`, or `yarn`.
 - Builds frontend assets with Vite.
+- Fails the deployment if `public/build/manifest.json` is not created.
 - Runs migrations when `DPANEL_RUN_MIGRATIONS=true`.
 - Defaults Laravel logs and deprecations to `stderr` before caching config.
 - Optimizes Laravel caches.

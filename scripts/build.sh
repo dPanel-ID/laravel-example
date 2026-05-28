@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -Eeuo pipefail
 
 APP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "${APP_DIR}"
@@ -37,15 +38,23 @@ fi
 php artisan octane:install --server=frankenphp --force --no-interaction
 
 if [[ -f "package-lock.json" ]]; then
-  npm ci
+  npm ci --include=dev
 elif [[ -f "pnpm-lock.yaml" ]] && command -v pnpm >/dev/null 2>&1; then
-  pnpm install --frozen-lockfile
+  pnpm install --frozen-lockfile --prod=false
+elif [[ -f "yarn.lock" ]] && command -v yarn >/dev/null 2>&1; then
+  yarn install --frozen-lockfile --production=false
 elif [[ -f "package.json" ]]; then
-  npm install
+  npm install --include=dev
 fi
 
 if [[ -f "package.json" ]]; then
+  rm -rf public/build
   npm run build
+
+  if [[ ! -f "public/build/manifest.json" ]]; then
+    echo "Vite build completed without creating public/build/manifest.json." >&2
+    exit 1
+  fi
 fi
 
 if [[ "${DPANEL_RUN_MIGRATIONS:-true}" == "true" ]]; then
