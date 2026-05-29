@@ -7,6 +7,7 @@ HOST="${APP_HOST:-0.0.0.0}"
 PORT="${PORT:-${APP_PORT:-8000}}"
 WORKERS="${OCTANE_WORKERS:-auto}"
 MAX_REQUESTS="${OCTANE_MAX_REQUESTS:-500}"
+ADMIN_OFF_CADDYFILE="${APP_DIR}/config/caddyfiles/frankenphp.admin-off.Caddyfile"
 
 export OCTANE_SERVER="${OCTANE_SERVER:-frankenphp}"
 export LOG_CHANNEL="${LOG_CHANNEL:-stderr}"
@@ -29,6 +30,12 @@ command=(php "${php_args[@]}" artisan octane:frankenphp --host="${HOST}" --port=
 
 if [[ -n "${OCTANE_CADDYFILE:-}" ]]; then
   command+=(--caddyfile="${OCTANE_CADDYFILE}")
+else
+  case "${OCTANE_DISABLE_CADDY_ADMIN:-false}" in
+    1|true|TRUE|yes|YES|on|ON)
+      command+=(--caddyfile="${ADMIN_OFF_CADDYFILE}")
+      ;;
+  esac
 fi
 
 if [[ -n "${OCTANE_LOG_LEVEL:-}" ]]; then

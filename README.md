@@ -158,6 +158,18 @@ LOG_STACK=stderr
 LOG_DEPRECATIONS_CHANNEL=stderr
 ```
 
+To disable Caddy's local admin endpoint for a systemd-managed deployment, add:
+
+```dotenv
+OCTANE_DISABLE_CADDY_ADMIN=true
+```
+
+When this is enabled, the runtime script starts Octane with
+`config/caddyfiles/frankenphp.admin-off.Caddyfile`, which sets Caddy's global
+`admin off` option. Use `systemctl restart <service-name>` instead of
+`php artisan octane:reload`, because Laravel Octane uses Caddy's admin API for
+FrankenPHP status, reload, and stop commands.
+
 Set `APP_URL` after routing or a load balancer is configured:
 
 ```dotenv
@@ -223,6 +235,11 @@ php artisan octane:frankenphp --host="${HOST}" --port="${PORT}"
 
 It binds to `0.0.0.0`, reads `PORT` from dPanel, and keeps the process in the
 foreground so systemd can manage the service.
+
+By default, the script uses Laravel Octane's built-in FrankenPHP Caddyfile. Set
+`OCTANE_CADDYFILE=/absolute/path/to/Caddyfile` to provide a fully custom
+Caddyfile, or set `OCTANE_DISABLE_CADDY_ADMIN=true` to use the bundled
+admin-disabled Caddyfile.
 
 Laravel application logs default to `stderr`, and PHP runtime errors are sent to
 `/dev/stderr`. Octane and FrankenPHP normal output remains on the process
