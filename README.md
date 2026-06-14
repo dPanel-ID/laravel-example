@@ -19,6 +19,13 @@ using server **422674e9b405**.
 - SQLite by default
 - External database support through environment variables
 
+Modify `bootstrap/app.php` to trust all proxies for X-Forwarded headers:
+```php
+    ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->trustProxies(at: '*');
+    })
+```
+
 ## dPanel Runtime Requirements
 
 Select these dependencies while creating the application in dPanel:
